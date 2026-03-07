@@ -16,6 +16,7 @@ from .calc.pnl import compute_realized_pnl, lots_to_json
 from .db import engine, init_db
 from .models import CalcRun, OcrSession
 from .ocr.engine import engine as ocr_engine
+from .ocr.dedup import dedup_trades
 from .ocr.parse import cluster_ocr_lines, parse_ocr_items
 from .schemas import (
     CalcRequest,
@@ -109,6 +110,11 @@ def ocr_images(files: list[UploadFile] = File(...)) -> Any:
             )
             for t in trades
         ]
+
+        deduped, removed = dedup_trades(trade_inputs)
+        if removed:
+            warnings.append(f"检测到重复订单 {len(removed)} 笔，已自动去重（按股票代码+价格+股数+成交时间）")
+        trade_inputs = deduped
 
         ocr_session.status = "done"
         ocr_session.image_paths_json = json_dumps(image_paths)
