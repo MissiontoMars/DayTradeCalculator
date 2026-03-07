@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>美股做T收益计算器</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>美股做T收益计算器</h1>
+
+      <section class="card">
+        <h2>1) 上传交易历史截图</h2>
+        <form id="uploadForm">
+          <input id="files" type="file" accept="image/*" multiple />
+          <button type="submit">识别订单</button>
+          <button id="debugBtn" type="button" disabled>查看调试</button>
+        </form>
+        <div id="uploadStatus" class="muted"></div>
+        <div id="warnings" class="warnings"></div>
+        <pre id="debug" class="debug"></pre>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <h2>2) 校对订单后计算收益</h2>
+          <button id="calcBtn" disabled>计算收益</button>
+        </div>
+        <div id="trades"></div>
+      </section>
+
+      <section class="card">
+        <h2>3) 结果</h2>
+        <div id="results"></div>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <h2>计算历史</h2>
+          <button id="refreshHistory">刷新</button>
+        </div>
+        <div id="history"></div>
+      </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
