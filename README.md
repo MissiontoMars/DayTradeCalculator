@@ -17,6 +17,7 @@ cd /Users/wanxing/work/code/TT
 python3 -m venv backend/.venv
 source backend/.venv/bin/activate
 pip install -r backend/requirements.txt
+export FINNHUB_TOKEN=你的token
 cd backend
 uvicorn app.main:app --reload --port 8000
 ```
@@ -32,6 +33,7 @@ pip install -r backend/requirements-macos-vision.txt
 浏览器打开：
 
 - http://127.0.0.1:8000/
+- 实时行情页：http://127.0.0.1:8000/quotes
 
 ## 使用方式
 

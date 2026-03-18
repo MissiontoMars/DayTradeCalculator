@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实时行情 - RKLB & RKLX</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="row">
+        <h1>实时行情：RKLB & RKLX</h1>
+        <a href="/">返回收益计算</a>
+      </div>
+
+      <section class="card">
+        <div class="row">
+          <h2>实时价格（每 10 秒刷新）</h2>
+          <div class="muted">
+            <div>
+              <span id="updatedAt"></span>
+              <span id="countdown"></span>
+            </div>
+            <div>
+              <span id="dataLag"></span>
+            </div>
+          </div>
+        </div>
+        <div id="quoteError" class="warnings"></div>
+        <div id="quotes"></div>
+      </section>
+
+      <section class="card">
+        <h2>换算说明</h2>
+        <div class="muted">
+          按“RKLX 为 RKLB 2x 做多”估算：当 RKLB 价格变动 Δ% 时，RKLX 价格约变动 2×Δ%（线性近似）。
+        </div>
+      </section>
+    </div>
+
+    <script src="/static/quotes.js"></script>
+  </body>
+</html>

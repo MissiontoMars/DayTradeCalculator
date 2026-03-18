@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import io
+import json
 import os
+import urllib.parse
+import urllib.request
 from decimal import Decimal
 from typing import Any
 
@@ -49,6 +52,11 @@ def _startup() -> None:
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(os.path.join(STATIC_DIR, "index.html"))
+
+
+@app.get("/quotes")
+def quotes_page() -> FileResponse:
+    return FileResponse(os.path.join(STATIC_DIR, "quotes.html"))
 
 
 def _save_upload(session_id: str, idx: int, up: UploadFile) -> tuple[str, bytes]:
@@ -132,6 +140,37 @@ def ocr_images(files: list[UploadFile] = File(...)) -> Any:
             trades=trade_inputs,
             warnings=warnings,
         )
+
+
+def _get_finnhub_token() -> str:
+    token = os.environ.get("FINNHUB_TOKEN", "").strip()
+    if not token:
+        raise HTTPException(status_code=500, detail="缺少 FINNHUB_TOKEN 环境变量")
+    return token
+
+
+def _fetch_finnhub_quote(symbol: str) -> dict[str, Any]:
+    token = _get_finnhub_token()
+    sym = symbol.strip().upper()
+    url = "https://finnhub.io/api/v1/quote?" + urllib.parse.urlencode({"symbol": sym, "token": token})
+    req = urllib.request.Request(url, headers={"accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=8) as resp:
+        raw = resp.read().decode("utf-8")
+    data = json.loads(raw)
+    if not isinstance(data, dict) or "c" not in data:
+        raise HTTPException(status_code=502, detail="行情接口返回异常")
+    return data
+
+
+@app.get("/api/quotes")
+def get_quotes(symbols: str = "RKLB,RKLX") -> Any:
+    syms = [s.strip().upper() for s in symbols.split(",") if s.strip()]
+    if not syms:
+        raise HTTPException(status_code=400, detail="symbols 不能为空")
+    out: dict[str, Any] = {"source": "finnhub", "quotes": {}}
+    for s in syms:
+        out["quotes"][s] = _fetch_finnhub_quote(s)
+    return out
 
 
 @app.get("/api/ocr-sessions/{ocr_session_id}")
